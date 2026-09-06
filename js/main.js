@@ -20,6 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
   stickyBar();
   drawer();
   reveal();
+  heroDepth();
+  tilt3d();
   filter();
   lightbox();
   serviceTabs();
@@ -29,6 +31,69 @@ document.addEventListener('DOMContentLoaded', () => {
   bookingForm();
   $('#year').textContent = new Date().getFullYear();
 });
+
+/* ---- hero: entrance + pointer / scroll parallax ---- */
+function heroDepth() {
+  const hero = $('.hero');
+  if (!hero) return;
+  requestAnimationFrame(() => requestAnimationFrame(() => hero.classList.add('ready')));
+  if (REDUCED) return;
+
+  let tx = 0, ty = 0, x = 0, y = 0, raf = 0, onScreen = true;
+  const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const loop = () => {
+    x += (tx - x) * 0.12; y += (ty - y) * 0.12;
+    hero.style.setProperty('--hx', x.toFixed(3));
+    hero.style.setProperty('--hy', y.toFixed(3));
+    raf = (Math.abs(tx - x) > 0.001 || Math.abs(ty - y) > 0.001) ? requestAnimationFrame(loop) : 0;
+  };
+  const kick = () => { if (!raf) raf = requestAnimationFrame(loop); };
+  if (fine) {
+    hero.addEventListener('pointermove', e => {
+      const r = hero.getBoundingClientRect();
+      tx = (e.clientX - r.left) / r.width - 0.5;
+      ty = (e.clientY - r.top) / r.height - 0.5;
+      kick();
+    });
+    hero.addEventListener('pointerleave', () => { tx = ty = 0; kick(); });
+  }
+  const onScroll = () => {
+    if (!onScreen) return;
+    hero.style.setProperty('--hs', Math.min(1, Math.max(0, scrollY / (hero.offsetHeight || innerHeight))).toFixed(3));
+  };
+  onScroll();
+  addEventListener('scroll', onScroll, { passive: true });
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(es => { onScreen = es[0].isIntersecting; }, { threshold: 0 }).observe(hero);
+  }
+}
+
+/* ---- mouse-follow 3D tilt on cards ---- */
+function tilt3d() {
+  if (REDUCED || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  const MAX = 7;
+  $$('.why__card, .price-card, .look__card, .rev-card, .about__img').forEach(card => {
+    card.classList.add('tilt3d');
+    let raf = 0, ex = 0, ey = 0;
+    const apply = () => {
+      const r = card.getBoundingClientRect();
+      const px = Math.min(1, Math.max(0, (ex - r.left) / r.width));
+      const py = Math.min(1, Math.max(0, (ey - r.top) / r.height));
+      card.style.setProperty('--ry', ((px - 0.5) * MAX).toFixed(2) + 'deg');
+      card.style.setProperty('--rx', ((0.5 - py) * MAX).toFixed(2) + 'deg');
+      card.style.setProperty('--ty', '-8px');
+      card.style.setProperty('--gx', (px * 100).toFixed(1) + '%');
+      card.style.setProperty('--gy', (py * 100).toFixed(1) + '%');
+      raf = 0;
+    };
+    card.addEventListener('pointerenter', () => card.classList.add('tilting'));
+    card.addEventListener('pointermove', e => { ex = e.clientX; ey = e.clientY; if (!raf) raf = requestAnimationFrame(apply); });
+    card.addEventListener('pointerleave', () => {
+      card.classList.remove('tilting');
+      ['--rx', '--ry', '--ty', '--gx', '--gy'].forEach(v => card.style.removeProperty(v));
+    });
+  });
+}
 
 /* ---- colour theme ---- */
 function themeSwitch() {

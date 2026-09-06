@@ -322,7 +322,7 @@ code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .9em;
 .rev-summary b { font-family: var(--serif); font-size: 30px; color: #fff; }
 .rev-summary .stars { color: var(--gold-soft); letter-spacing: 2px; }
 .rev-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
-.rev-card { background: var(--paper); color: var(--ink); border-radius: var(--radius); padding: 26px 24px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; }
+.rev-card { position: relative; overflow: hidden; background: var(--paper); color: var(--ink); border-radius: var(--radius); padding: 26px 24px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; }
 .rev-card .stars { color: var(--gold); letter-spacing: 2px; font-size: 14px; }
 .rev-card p { font-size: 14.5px; margin: 12px 0 18px; }
 .rev-card__who { display: flex; align-items: center; gap: 12px; margin-top: auto; }
@@ -431,11 +431,65 @@ code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .9em;
 .demo-tag i { width: 6px; height: 6px; border-radius: 50%; background: var(--gold-soft); }
 @media (max-width: 560px) { .demo-tag { font-size: 9px; padding: 6px 10px; } }
 
-/* ---------- reveal + reduced motion ---------- */
+/* =========================================================
+   3D DEPTH LAYER  (all transform/opacity; killed under reduce-motion)
+   ========================================================= */
+
+/* -- hero: Ken-Burns drift + pointer & scroll parallax -- */
+.hero { --hx: 0; --hy: 0; --hs: 0; }
+.hero__media { transform: translate3d(calc(var(--hx) * -16px), calc(var(--hy) * -14px), 0) scale(1.04); transition: transform .35s ease-out; }
+.hero__media img { animation: kenburns 26s ease-in-out infinite alternate; will-change: transform; }
+@keyframes kenburns { from { transform: scale(1.05); } to { transform: scale(1.15) translate(1.5%, -1.5%); } }
+.hero__inner { transform-style: preserve-3d;
+  transform:
+    perspective(1100px)
+    rotateX(calc(var(--hy) * -2.4deg))
+    rotateY(calc(var(--hx) * 3deg))
+    translate3d(calc(var(--hx) * 12px), calc(var(--hy) * 9px - var(--hs) * 46px), 0);
+  opacity: calc(1 - var(--hs) * .9);
+  transition: transform .3s ease-out, opacity .3s linear; }
+.js .hero__inner > * { opacity: 0; transform: translateY(22px) rotateX(-9deg); transform-origin: 50% 100%;
+  transition: opacity .8s ease, transform .8s cubic-bezier(.16,.84,.24,1); }
+.hero.ready .hero__inner > * { opacity: 1; transform: none; }
+.hero.ready .eyebrow  { transition-delay: .10s; }
+.hero.ready h1        { transition-delay: .20s; }
+.hero.ready .hero__sub { transition-delay: .38s; }
+.hero.ready .hero__cta { transition-delay: .52s; }
+
+/* -- scroll reveal: perspective flip-up, staggered per grid -- */
 main > section[id], .hero { scroll-margin-top: 76px; }
-.reveal { transition: opacity .6s ease, transform .6s cubic-bezier(.16,.84,.24,1); }
-.js .reveal { opacity: 0; transform: translateY(20px); }
-.js .reveal.in { opacity: 1; transform: none; }
+.reveal { transition: opacity .6s ease, transform .7s cubic-bezier(.16,.84,.24,1); transform-origin: 50% 100%; }
+.js .reveal { opacity: 0; transform: perspective(1200px) rotateX(8deg) translate3d(0, 30px, -30px); }
+.js .reveal.in { opacity: 1; transform: perspective(1200px) rotateX(0) translate3d(0, 0, 0); }
+.grid > .reveal:nth-child(2), .pricing > .reveal:nth-child(2), .rev-grid > .reveal:nth-child(2), .steps > .reveal:nth-child(2) { transition-delay: .08s; }
+.grid > .reveal:nth-child(3), .pricing > .reveal:nth-child(3), .rev-grid > .reveal:nth-child(3), .steps > .reveal:nth-child(3) { transition-delay: .16s; }
+.grid > .reveal:nth-child(4), .steps > .reveal:nth-child(4) { transition-delay: .24s; }
+.steps > .reveal:nth-child(5) { transition-delay: .16s; }
+.steps > .reveal:nth-child(6) { transition-delay: .24s; }
+
+/* -- card 3D tilt (JS sets --rx/--ry/--gx/--gy; .tilting on hover) -- */
+.tilt3d { transform-style: preserve-3d;
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(var(--ty, 0px));
+  transition: transform .45s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease; }
+.tilt3d.tilting { transition: box-shadow .25s ease; box-shadow: var(--shadow-lg); }
+.card.tilt3d:hover { --ty: -6px; box-shadow: var(--shadow); }        /* graceful lift without JS */
+.tilt3d::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(280px circle at var(--gx, 50%) var(--gy, 0%), rgba(255,255,255,.30), transparent 62%);
+  mix-blend-mode: soft-light; opacity: 0; transition: opacity .35s ease; z-index: 3; }
+.tilt3d.tilting::after { opacity: 1; }
+.tilt3d > * { transform: translateZ(0.01px); }                       /* keep children on the raised plane */
+.why__card .icon-chip { transition: transform .5s cubic-bezier(.2,.8,.2,1); transform-style: preserve-3d; }
+.tilt3d.tilting .icon-chip { transform: rotateY(180deg); }
+
+/* -- portfolio: pop toward the viewer -- */
+.gallery { perspective: 1200px; }
+.shot { transition: transform .45s cubic-bezier(.2,.8,.2,1), box-shadow .45s ease; transform-style: preserve-3d; }
+.shot:hover { transform: translateZ(34px) rotateX(3deg); box-shadow: var(--shadow-lg); z-index: 2; }
+
+@media (hover: none), (pointer: coarse) {
+  .tilt3d, .tilt3d:hover { transform: none; }
+  .shot:hover { transform: none; }
+}
 
 @media (max-width: 620px) {
   :root { --sp: clamp(52px, 12vw, 76px); }
@@ -459,6 +513,10 @@ main > section[id], .hero { scroll-margin-top: 76px; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
-  .js .reveal { opacity: 1; transform: none; }
+  .js .reveal, .js .hero__inner > * { opacity: 1 !important; transform: none !important; }
+  .hero__media, .hero__media img, .hero__inner,
+  .tilt3d, .tilt3d:hover, .shot, .shot:hover, .why__card .icon-chip { transform: none !important; }
+  .tilt3d::after { display: none; }
+  .hero__inner { opacity: 1 !important; }
   .hero__scroll { display: none; }
 }
