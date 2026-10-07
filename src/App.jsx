@@ -8,6 +8,7 @@ import CheckoutModal from './components/CheckoutModal.jsx';
 import ThemeAdminPanel from './components/ThemeAdminPanel.jsx';
 import ScrollToTop from './components/ScrollToTop.jsx';
 import WhatsAppButton from './components/WhatsAppButton.jsx';
+import LaunchingSoon from './components/LaunchingSoon.jsx';
 import Home from './pages/Home.jsx';
 import Shop from './pages/Shop.jsx';
 import ProductDetail from './pages/ProductDetail.jsx';
@@ -86,6 +87,7 @@ export default function App() {
 
       <Footer />
 
+      <LaunchingSoon color={theme.accentColor} />
       <WhatsAppButton />
       <CartDrawer />
       <CheckoutModal />

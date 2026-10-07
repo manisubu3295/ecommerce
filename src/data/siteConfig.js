@@ -4,6 +4,9 @@ export const SITE_CONFIG = {
   legalName: "Barani's Couture",
   domain: 'baraniscouture.com',
   tagline: 'Cinematic and traditional fashion, reconstructed for today.',
+  // Pre-launch "Launching soon" ribbon. On launch day build with
+  // VITE_LAUNCHING_SOON=false (or set this to false) to remove it.
+  launchingSoon: !(typeof import.meta !== 'undefined' && import.meta.env?.VITE_LAUNCHING_SOON === 'false'),
   // VITE_SITE_URL (build time) or PUBLIC_SITE_URL (API server) can override this,
   // e.g. for a staging deploy; production falls back to the real domain.
   siteUrl: ((typeof import.meta !== 'undefined' && import.meta.env?.VITE_SITE_URL)
