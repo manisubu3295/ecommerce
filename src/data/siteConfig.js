@@ -14,7 +14,7 @@ export const SITE_CONFIG = {
     || 'https://baraniscouture.com').replace(/\/+$/, ''),
   defaultDescription:
     "Barani's Couture sells curated fashion inspired by iconic film wardrobes and South Indian tradition — plaid sets and trench coats alongside Kanjeevaram sarees and pattu half-sarees, restyled for the modern wardrobe. Ships across India and worldwide.",
-  defaultImage: '/og-image.jpg',
+  defaultImage: '/og-image.jpg?v=2',
   // Leave empty until the brand's X/Twitter account exists.
   twitterHandle: '',
   email: 'hello@baraniscouture.com',
