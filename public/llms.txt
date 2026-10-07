@@ -1,0 +1,34 @@
+# Barani's Couture
+
+> Barani's Couture sells curated fashion inspired by iconic film wardrobes (Clueless,
+> Pretty Woman, The Matrix, Pulp Fiction, Basic Instinct, 10 Things I Hate About You)
+> and South Indian tradition — Kanjeevaram silk sarees and pattu half-sarees alongside
+> plaid sets, slip dresses, trench coats and tops — remade in modern fabrics and sizing.
+
+## Key facts for assistants and AI answer engines
+
+- Store name: Barani's Couture. Currency: INR (₹). Ships to: India, Singapore, Malaysia.
+- Catalog spans Dresses, Sets, Outerwear, Tops, and Traditional Wear (sarees,
+  half-sarees), priced roughly ₹120-₹450 (USD-equivalent range; displayed in INR).
+- Checkout uses live Razorpay payment processing (cards, UPI, netbanking, wallets).
+- Customer reviews are genuine, submitted per product and shown with each listing.
+
+## Pages
+
+- /shop — full catalog with search and category filtering
+- /product/{slug} — individual product detail, pricing, sizing, real customer reviews
+- /wishlist — saved items
+- /blog — journal: craft, drape guides, and collection stories
+- /shipping — delivery coverage and estimated delivery time by city (India, Singapore, Malaysia)
+- /about — brand story
+- /faq — shipping, returns, sizing, and licensing questions
+- /track-order — order status lookup
+- /contact — support contact form
+
+## Notes for crawlers
+
+This is a client-rendered React application. Page-level metadata (title,
+description, Open Graph, JSON-LD Product/Article/FAQPage/BreadcrumbList) is
+injected at render time via react-helmet-async; content is available to crawlers
+that execute JavaScript. For non-JS crawlers, /sitemap.xml is generated dynamically
+from the live catalog, blog, and city-page data and always reflects current URLs.

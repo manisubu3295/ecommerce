@@ -10,3 +10,12 @@ desktop.ini
 # local dev
 node_modules/
 *.log
+.env
+.env.*
+!.env.example
+server/media/
+server/data/
+*razorpay*key*.csv
+
+# build output
+dist/

@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* --- Admin workspace ---
+   The admin is a work tool with its own fixed palette; it deliberately does
+   not follow the storefront theme. Kept in the components layer so Tailwind
+   utilities on individual elements still win. */
+@layer components {
+  /* Peacock & zari: Kanjeevaram colours on a cool mull-grey ground.
+     Peacock is the working colour (header, primary actions), arakku red marks
+     only what is waiting on the admin, zari gold is ornament and "current". */
+  .admin-app {
+    --adm-canvas: #E9ECEA;
+    --adm-surface: #FFFFFF;
+    --adm-rail: #F6F7F5;
+    --adm-line: #D7DCD8;
+    --adm-ink: #1D1F24;
+    --adm-muted: #5B6166;
+    --adm-peacock: #0F4F54;
+    --adm-peacock-deep: #0A3A3E;
+    --adm-arakku: #9E2B3C;
+    --adm-zari: #C39A3E;
+    background: var(--adm-canvas);
+    color: var(--adm-ink);
+    font-family: 'Schibsted Grotesk', system-ui, sans-serif;
+  }
+
+  .admin-app .adm-card {
+    background: var(--adm-surface);
+    border: 1px solid var(--adm-line);
+    border-radius: 14px;
+  }
+
+  .admin-app .adm-card .adm-card {
+    border-radius: 10px;
+  }
+
+  .admin-app :where(input:not([type='checkbox']):not([type='file']), select, textarea) {
+    background: var(--adm-surface);
+    border-color: var(--adm-line);
+    border-radius: 8px;
+  }
+
+  .admin-app :where(button, a) {
+    border-radius: 8px;
+  }
+
+  .admin-app :focus-visible {
+    outline: 2px solid var(--adm-primary);
+    outline-offset: 2px;
+  }
+
+  .admin-app input:focus,
+  .admin-app select:focus,
+  .admin-app textarea:focus {
+    border-color: var(--adm-primary);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
